@@ -1,3 +1,7 @@
+global using DOTNET_RPG.Models;
+global using DOTNET_RPG.Models.Enums;
+using DOTNET_RPG.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//TODO: remind oneself how's addScope relevant in this project?
+builder.Services.AddScoped<ICharacterService, CharacterService>(); //add the ability for pages to "inject" objects, like to instance objects on their own. Constructor and all.
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 
