@@ -59,5 +59,6 @@ namespace DOTNET_RPG.Controllers
 
             return Ok(serviceResponse);
         }
+
     }
 }
