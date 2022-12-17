@@ -9,8 +9,8 @@ using DOTNET_RPG.DTOs.Character;
 namespace DOTNET_RPG.Controllers
 {
     //ATTRIBUTES:
-    [ApiController] //adds stuff to make this controller more conveinent for web use. How? Why?
-    [Route("api/[controller]")] //allows us to type api/... to get the data we want. Service calls. [controller] being the "convention" of the class name, being CharacterController, C# knows to eliminate Controller, so we can access this controller, by writing: /api/Character.
+    [ApiController] //Attribute-based routing! ApiController Adds stuff to make this controller more conveinent for web use. How? Why?
+    [Route("api/[controller]")] //allows us to type api/Character... to get the data we want. Service calls. [controller] being the "convention" of the class name, being CharacterController, C# knows to eliminate Controller, so we can access this controller, by writing: /api/Character.
     public class CharacterController : ControllerBase
     {
         //__<name> : injected object.
@@ -24,24 +24,25 @@ namespace DOTNET_RPG.Controllers
            
 
         //IActionresult, returns a status code to the client. OK being a "200ok" stauts code, so we return Frodo the character, see class Character.
-        [HttpGet("GetaAll")]
+        [HttpGet("GetAll")]
         // or can use in addition: [Route("GetAll")]
         //HttpGet -- marks for Swagger, and in general for any web-API, that this function is a "get" function, and should be retrieved on any get-request.
         public async Task<ActionResult<List<ServiceResponse<Character>>>> get(){
             return Ok(await _characterService.getAllCharacters());
         }
 
+        
         [HttpGet("{id}")] //id matches the parameter in getSingle(int id)!
         public async Task<ActionResult<ServiceResponse<Character>>> getSingle(int id){
             return Ok(await _characterService.getCharacterByID(id));
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<List<ServiceResponse<Character>>>> addCharacter (AddCharacterDTO character){
             return Ok(await _characterService.addCharacter(character));
         }
 
-        [HttpPut]
+        [HttpPut("Update")]
         public async Task<ActionResult<List<ServiceResponse<Character>>>> updateCharacter (UpdateCharacterDTO updatedCharacter){
             var serviceResponse = await _characterService.updateCharacter(updatedCharacter);
             if (serviceResponse.data == null)
@@ -59,6 +60,12 @@ namespace DOTNET_RPG.Controllers
 
             return Ok(serviceResponse);
         }
+
+    /*
+    ############################################################################################################################################
+        ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  
+    ############################################################################################################################################
+    */
 
     }
 }

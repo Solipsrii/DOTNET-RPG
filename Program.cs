@@ -1,8 +1,9 @@
 global using DOTNET_RPG.Models;
 global using DOTNET_RPG.Models.Enums;
-using DOTNET_RPG.Data;
-using DOTNET_RPG.Services;
-using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using DOTNET_RPG.Data;
+global using DOTNET_RPG.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //TODO: remind oneself how's addScope relevant in this project?
 builder.Services.AddScoped<ICharacterService, CharacterService>(); //add the ability for pages to "inject" objects, like to instance objects on their own. Constructor and all.
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();

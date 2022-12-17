@@ -33,9 +33,9 @@ namespace DOTNET_RPG.Services
             var serviceResponse = new ServiceResponse<List<GetCharacterDTO>>();
             
             Character character = _mapper.Map<Character>(newCharacter); //convert characterDTO to Character.
-            _context.Characters.Add(character);
+            _context.characters.Add(character);
             await _context.SaveChangesAsync();
-            serviceResponse.data = await _context.Characters
+            serviceResponse.data = await _context.characters
                                         .Select(c => _mapper.Map<GetCharacterDTO>(c))
                                         .ToListAsync<GetCharacterDTO>();
             return serviceResponse;
@@ -45,7 +45,7 @@ namespace DOTNET_RPG.Services
         public async Task<ServiceResponse<List<GetCharacterDTO>>> getAllCharacters()
         {
             var serviceResponse = new ServiceResponse<List<GetCharacterDTO>>();
-            var dbCharacters = await _context.Characters.ToListAsync();
+            var dbCharacters = await _context.characters.ToListAsync();
             serviceResponse.data = dbCharacters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToList<GetCharacterDTO>();
             return serviceResponse;
         }
@@ -55,15 +55,17 @@ namespace DOTNET_RPG.Services
             var serviceResponse = new ServiceResponse<GetCharacterDTO>();
             try
             {
-                var dbCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.id == id);
+                var dbCharacter = await _context.characters.FirstOrDefaultAsync(c => c.id == id) ?? throw new Exception(); //?? -> an operand where if the value returned is null, the right side of the ?? is evaluated.
                 serviceResponse.data = _mapper.Map<GetCharacterDTO>(dbCharacter); //convert Character object, to GetCharacterDTO object.
+                
             }
             //if no such ID exists
-            catch(Exception e)
+            catch(Exception)
             {
-                serviceResponse.message = e.Message;
+                serviceResponse.message = "ID does not exist in DB.";
                 serviceResponse.success = false;
             }
+ 
             return serviceResponse;
         }
 
@@ -75,13 +77,13 @@ namespace DOTNET_RPG.Services
            //find the specific character to update, if not found, send an error report and update nothing.
            try
            {
-             var dbCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.id == updatedCharacterDTO.id);
+             var dbCharacter = await _context.characters.FirstAsync(c => c.id == updatedCharacterDTO.id);
              dbCharacter =  _mapper.Map(updatedCharacterDTO, dbCharacter);
 
              await _context.SaveChangesAsync();
              serviceResponse.data = _mapper.Map<GetCharacterDTO>(dbCharacter);
            }
-           catch (ArgumentNullException e)
+           catch (Exception e)
            {
             serviceResponse.message = e.Message;
             serviceResponse.success = false;
@@ -96,27 +98,19 @@ namespace DOTNET_RPG.Services
 
             try 
             {
-                Character character = await _context.Characters.FirstAsync(c => c.id == id);
-                _context.Characters.Remove(character);
+                Character character = await _context.characters.FirstAsync(c => c.id == id);
+                _context.characters.Remove(character);
                 await _context.SaveChangesAsync();
 
-                serviceResponse.data = await _context.Characters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToListAsync();
+                serviceResponse.data = await _context.characters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToListAsync();
             }
             catch (Exception e)
             {
-                serviceResponse.message = e.Message;
+                serviceResponse.message = e.Message+" I.E: ID is most likely wrong.";
                 serviceResponse.success = false;
             }
-            scrubID();
+            
             return serviceResponse;
-        }
-
-        private async void scrubID(){
-            var DBCharacters = await _context.Characters.ToListAsync();
-            int id = 1;
-            foreach(Character c in _context.Characters)
-                c.id = id++;
-            await _context.SaveChangesAsync();
         }
     }
 }

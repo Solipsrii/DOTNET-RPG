@@ -23,5 +23,10 @@ namespace DOTNET_RPG.Models
         ///</summary> 
         public string message { get; set; } = "";
         ///<summary>
+
+        public void setErrorMessage(string msg){
+            message = msg;
+            success = false;
+        }
     }
 }

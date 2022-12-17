@@ -20,5 +20,7 @@ namespace DOTNET_RPG.Models
 
         public RpgClass Class { get; set; } = RpgClass.Mage;
 
+        public User? user { get; set; }
+
     }
 }
