@@ -13,6 +13,7 @@ namespace DOTNET_RPG.Services
 {
     /**
         Responsible for for all "communication" between the character model ->  and the database, and the client.
+        That means it's a form of Repository.
     */
     public class CharacterService : ICharacterService
     {

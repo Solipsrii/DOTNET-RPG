@@ -1,4 +1,8 @@
 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+
 namespace DOTNET_RPG.Data
 {
     /*
@@ -7,10 +11,13 @@ namespace DOTNET_RPG.Data
     public class AuthRepository : IAuthRepository
     {
         //DEPENDENCY INJECTION of DataContext.
-        DataContext _context;
-        public AuthRepository(DataContext context)
+        private DataContext _context;
+        //DEPENDENCY INJECTION of the appsettings.json file
+        private IConfiguration _configuration;
+        public AuthRepository(DataContext context, IConfiguration configuration)
         {
          _context = context;   
+         _configuration = configuration;
         }
 
         public async Task<ServiceResponse<string>> login(string username, string password)
@@ -27,7 +34,7 @@ namespace DOTNET_RPG.Data
             
             //assuming the user was found, AND the password is correct, we send the user's ID back via the responseService:
             else {
-                response.data = user.id.ToString();
+                response.data = createToken(user);
             }
 
             return response;
@@ -84,6 +91,56 @@ namespace DOTNET_RPG.Data
                 
                 return passwordHash.SequenceEqual(contestedHash); //checks byte-by-byte if both are equal.
             }
+        }
+        private string createToken(User user){
+            /*
+            This is a big one, but in short -- 
+            a JWT, json web token, is a string that's saved in a json file (like appsettings.json)
+            in a secure way. Rather than saving your password in-session in plain-text, we can 
+            encrypt it, save it to file, and decrypt it on-server.
+
+            This requires: 
+            json-claims, 
+            security-key,
+            token descriptor, the handler.
+            security token.
+
+            * A "claim" is the identifier of the user (level of security access, name of the user, etc)
+            * "security-key" is the private key generated used to decrypt the specific token.
+            * "token descriptor" is an object that contains special characteristics of the token, like
+                                when should it expire and such.
+            * the "handler" serializes the string into bytes, and validates em'. useful shit.
+            * security token -- the final garbled string nonsense.
+            */
+
+            //claim types-name (id), claim type name.
+            List<Claim> claimList = new List<Claim>{
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()), //claim type ID
+                new Claim(ClaimTypes.Name, user.username) //Name!
+            };
+
+            //fetching the security-token that we save from appsettings.json
+            SymmetricSecurityKey? key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            if (key == null)
+                throw new Exception("No existing Token!");
+
+            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            
+            //one last object to prep, contains the qualities needed to create the final token.
+            //like when the token should expire, and so on. 
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claimList),  //claims
+                Expires =  DateTime.Now.AddDays(1),       //claims
+                SigningCredentials = creds              //security key
+            };
+            //last prep
+            //JWT (json web token) token handler. Package provides support to serializing and validating json cred tokens!
+            JwtSecurityTokenHandler tokenHandler  = new JwtSecurityTokenHandler();
+            //create the token!
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }
