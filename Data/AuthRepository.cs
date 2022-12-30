@@ -30,13 +30,13 @@ namespace DOTNET_RPG.Data
             
             //assuming the user was found, verify if the password is correct.
             else if (!verifyPassword(password, user.passwordHash, user.passwordSalt))
-                response.setErrorMessage("Username '"+username+"' does not match with given password.");
+                response.setErrorMessage("Username '"+username+"' does not match with given password."); //obvious security risk but w/e
             
             //assuming the user was found, AND the password is correct, we send the user's ID back via the responseService:
-            else {
+            //i.e: the generated JWT token, pairs the user's ID into its nameid. Once decrypted, the user's ID (already pulled from the DB) is 
+            else 
                 response.data = createToken(user);
-            }
-
+            
             return response;
         }
 
@@ -66,9 +66,8 @@ namespace DOTNET_RPG.Data
 
         public async Task<bool> userExists(string username)
         {
-            if(await _context.users.AnyAsync(u => u.username.Equals(username)))
-                return true;
-            return false;
+            return(await _context.users
+            .AnyAsync(u => u.username.Equals(username) ));
         }
         
 
@@ -115,12 +114,13 @@ namespace DOTNET_RPG.Data
 
             //claim types-name (id), claim type name.
             List<Claim> claimList = new List<Claim>{
-                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()), //claim type ID
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()), //claim type ID, this is added to HttpContext.User automatically!
                 new Claim(ClaimTypes.Name, user.username) //Name!
             };
 
             //fetching the security-token that we save from appsettings.json
             SymmetricSecurityKey? key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            
             if (key == null)
                 throw new Exception("No existing Token!");
 
@@ -137,9 +137,9 @@ namespace DOTNET_RPG.Data
             //last prep
             //JWT (json web token) token handler. Package provides support to serializing and validating json cred tokens!
             JwtSecurityTokenHandler tokenHandler  = new JwtSecurityTokenHandler();
-            //create the token!
+            //create the JWT! (i.e: jason format, all details of claims and such)
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
+            //"serializes" the token, i.e: converts all the data into an "encrypted" hash nonsense.
             return tokenHandler.WriteToken(token);
         }
     }

@@ -8,7 +8,7 @@ namespace DOTNET_RPG.Models
     //an OBJECT WRAPPER, contains a generic object (data), which is identital as if using the object itself (i.e: character.name, wrapper.data.name)
     //the added benefit here is front-end support. More information to directly draw from this specific object!
 
-    public class ServiceResponse<T>
+    public class ServiceResponse<T> : ServiceResponse
     {
         public T? data { get; set; } //the generic, the main component. Carries all of the information of the original format.
 
@@ -30,4 +30,5 @@ namespace DOTNET_RPG.Models
             success = false;
         }
     }
+    public abstract class ServiceResponse{}
 }

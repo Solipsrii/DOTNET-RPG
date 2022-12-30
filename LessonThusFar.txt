@@ -25,6 +25,14 @@ ServiceResponse:
         public class ServiceResponse<T> { public T? data...}
     that acts as a WRAPPER-OBJECT. data is any object to be transferred, but the ServiceResponse also reports for errors (String msgs), and operation success / failure. 
 
+SQL relationships:
+    One-to-One:
+        a relationship where in a table, only *one* entry can be tied to a foreign-table. 
+        A unique person has only 1 unique passport. Let's say the passport is linked to a unique person. If we'll try to link to the same person in another passport, we'll get an error.
+        The table which links to another, is the 'dependent'.
+        To achieve this in EF, we create in Person a Passport object and an int passportId. This makes Person the dependent. In Passport, we create a Person object.
+        Migrate, etc, database update.
+
 
 Tools:
     Dotnet ef

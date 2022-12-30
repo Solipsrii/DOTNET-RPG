@@ -4,6 +4,7 @@ using DOTNET_RPG.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DOTNETRPG.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221225130539_Weapon")]
+    partial class Weapon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +64,7 @@ namespace DOTNETRPG.Migrations
 
                     b.HasIndex("weaponid");
 
-                    b.ToTable("characters", (string)null);
+                    b.ToTable("characters");
                 });
 
             modelBuilder.Entity("DOTNET_RPG.Models.User", b =>
@@ -86,7 +89,7 @@ namespace DOTNETRPG.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("DOTNET_RPG.Models.Weapon", b =>
@@ -106,7 +109,7 @@ namespace DOTNETRPG.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("weapons", (string)null);
+                    b.ToTable("weapons");
                 });
 
             modelBuilder.Entity("DOTNET_RPG.Models.Character", b =>

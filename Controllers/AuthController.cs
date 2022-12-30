@@ -12,6 +12,7 @@ namespace DOTNET_RPG.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _authRep;
+        
         public AuthController(IAuthRepository authRep)
         {
             _authRep = authRep;
@@ -38,7 +39,7 @@ namespace DOTNET_RPG.Controllers
         ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  
     ############################################################################################################################################
     */
-
+        //an attempt at being fancy
         private ActionResult<ServiceResponse<T>> returnHandling<T> (ServiceResponse<T> response){
             if (!response.success)
                 return BadRequest(response);

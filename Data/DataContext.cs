@@ -19,5 +19,7 @@ namespace DOTNET_RPG.Data
         //note: DbSet<class>, this "class" is used to define the Migration data model.
         public DbSet<Character> characters { get; set;}
         public DbSet<User> users { get; set;}
+
+        public DbSet<Weapon> weapons {get; set;}
     }
 }
