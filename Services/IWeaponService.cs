@@ -9,6 +9,7 @@ namespace DOTNET_RPG.Services
 {
     public interface IWeaponService
     {
-        public Task<ServiceResponse<List<GetWeaponDTO>>> addWeapon (AddWeaponDTO weapon);
+        public Task<ServiceResponse<List<GetWeaponDTO>>> AddWeapon (AddWeaponDTO weapon);
+        public Task<ServiceResponse<List<GetWeaponDTO>>> GetWeaponList ();
     }
 }

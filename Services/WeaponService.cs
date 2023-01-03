@@ -20,9 +20,20 @@ namespace DOTNET_RPG.Services
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _mapper = mapper;
+    
         }
 
-        public async Task<ServiceResponse<List<GetWeaponDTO>>> addWeapon(AddWeaponDTO addWeapon)
+
+         public async Task<ServiceResponse<List<GetWeaponDTO>>> GetWeaponList (){
+            //get all list of weapons from _context
+            var response = new ServiceResponse<List<GetWeaponDTO>>();
+            var weaponList = await _context.weapons.ToListAsync();
+            response.data =  _mapper.Map<List<GetWeaponDTO>>(weaponList);
+
+            return response;
+         }
+
+        public async Task<ServiceResponse<List<GetWeaponDTO>>> AddWeapon(AddWeaponDTO addWeapon)
         {
             /**
             add a weapon to the DB by first ensuring its name is unique, and then push through a list of all existing weapons.

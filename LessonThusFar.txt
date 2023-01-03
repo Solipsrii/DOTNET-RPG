@@ -10,6 +10,20 @@ DTOs:
          only contain these very limited fields, variables, and all. Probably to save on bandwidth or something.
          The downside to DTOs, is that there is a need to convert from BASE-OBJECT to DTO-OBJECT back and forth.
 
+DataContext:
+TODO:: add shit about datacontext.
+
+To seed the DB with rows:
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Skill>().HasData(
+                new Skill {id = 1, name = "fireball", damage = 15},
+                new Skill {id = 2, name = "ice arrow", damage = 7},
+                new Skill {id = 3, name = "lightning bolt", damage = 20},
+                new Skill {id = 4, name = "earth lance", damage = 12}
+            );
+        }
+
 AutoMapper:
  A library that allows convert one object to another, by automatically assigning the variable of class A to the variables of class B.
  Automapper requires the creation of AutoMapperProfile.cs file to manage its conversion profiles --  from Source classes, to a designated Target class. Such as: 
@@ -50,3 +64,9 @@ Tools:
     3. We then run (dotnet ef migrations add InitialCreate) to establish the migration of our model, dbSet<Character> (data model Character), to our SQL server.
     4. Then run dotnet ef database update, to "update the database to a specified migration".
     
+
+
+Notes for skills:
+0. skills relationship being many-to-many, outside of the 'skill' table that lists all skills, there's an extra table (CharacterSkills) to list the relationship of a character to many skills.
+1. Instead of adding an interface for skill addition, this time we played around with Row Seeding. In the DataContext class, we overriden the function OnModelCreating, and seeded with
+     modelBuilder.Entity<Skill>().HasData( ... )

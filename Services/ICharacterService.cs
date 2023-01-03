@@ -20,6 +20,8 @@ namespace DOTNET_RPG.Services
         Task<ServiceResponse<List<GetCharacterDTO>>> DeleteCharacter (int id);
 
         Task<ServiceResponse<GetCharacterDTO>> AddWeapon (int characterID, int weaponID);
+
+        Task<ServiceResponse<GetCharacterDTO>> AddCharacterSkills (AddSkillToCharacterDTO newSkill);
         
     }
 }

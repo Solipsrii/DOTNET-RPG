@@ -73,6 +73,15 @@ namespace DOTNET_RPG.Controllers
             return Ok(serviceResponse);
         }
 
+        [HttpPost("AddSkill")]
+        public async Task<ActionResult<ServiceResponse>> addCharacterSkill(AddSkillToCharacterDTO newSkill){
+            var response = await _characterService.AddCharacterSkills(newSkill);
+            if (response == null)
+                return BadRequest(response);
+                
+            return Ok(response);
+        }
+
     /*
     ############################################################################################################################################
         ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  ## HELPER METHODS ##  

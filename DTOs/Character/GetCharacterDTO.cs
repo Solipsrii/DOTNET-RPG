@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DOTNET_RPG.DTOs.Skills;
 using DOTNET_RPG.DTOs.WeaponDTO;
 using DOTNET_RPG.Models;
 
@@ -20,6 +21,8 @@ namespace DOTNET_RPG.DTOs.Character
         public int intelligence { get; set; } = 10;
 
         public GetWeaponDTO weapon { get; set; }
+
+        public List<GetSkillDTO> skills {get; set;}
 
         public RpgClass Class { get; set; } = RpgClass.Mage;
     }

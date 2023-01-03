@@ -14,12 +14,14 @@ namespace DOTNET_RPG.Data
             
         }
 
+
+
         //can save particular characters into table Characters in the sql-db, thanks to DbSet that abstracts that process.
         //note: "Characters" is considered an Entity. (of entity framework)
         //note: DbSet<class>, this "class" is used to define the Migration data model.
         public DbSet<Character> characters { get; set;}
         public DbSet<User> users { get; set;}
-
         public DbSet<Weapon> weapons {get; set;}
+        public DbSet<Skill> skills { get; set; }
     }
 }

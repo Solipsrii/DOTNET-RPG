@@ -20,11 +20,16 @@ namespace DOTNET_RPG.Controllers
 
         [HttpPost("AddWeapon")]
         public async Task<ActionResult<ServiceResponse>> AddWeapon (AddWeaponDTO weapon){
-            var response = await _weaponService.addWeapon(weapon);
+            var response = await _weaponService.AddWeapon(weapon);
 
             if (response == null)
                 return BadRequest(response);
             return Ok(response);
+        }
+
+         [HttpGet("GetWeaponsList")]
+        public async Task<ActionResult<List<ServiceResponse>>> GetWeaponList (){
+            return Ok(await _weaponService.GetWeaponList());
         }
     }
 }

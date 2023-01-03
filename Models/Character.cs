@@ -21,7 +21,8 @@ namespace DOTNET_RPG.Models
         public RpgClass Class { get; set; } = RpgClass.Mage;
 
         public User? user { get; set; }
-        public Weapon? weapon { get; set; } = new Weapon(); //startout weapon as null. not sure how to fix it to default to = new Weapon();.
+        public Weapon? weapon { get; set; }
+        public List<Skill> Skills { get; set; }
 
     }
 }

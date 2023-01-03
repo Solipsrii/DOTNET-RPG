@@ -39,7 +39,8 @@ namespace DOTNET_RPG.Services
             
             Character character = _mapper.Map<Character>(newCharacter); //convert characterDTO to Character.
             character.user = await _context.users.FirstOrDefaultAsync(u => u.id == GetUserID()); //add the new character to the currently authenticatd user. Note: this system is pretty dumb, as if you can add a character, that means you have to log in, so "looking for the user in the db" is pretty dumb.
-            
+            character.weapon = await _context.weapons.FirstOrDefaultAsync(w => w.id == 1); //by default adding "fists" as a weapon to the character.
+
             _context.characters.Add(character); //add the character to the general DBSet
             await _context.SaveChangesAsync();
 
@@ -57,6 +58,7 @@ namespace DOTNET_RPG.Services
             var dbCharacters = await _context.characters
                 .Include(c => c.user)
                 .Include(c => c.weapon)
+                .Include(c => c.Skills)
                 .Where(c => c.user.id == userID)
                 .ToListAsync();
             
@@ -72,7 +74,13 @@ namespace DOTNET_RPG.Services
             var serviceResponse = new ServiceResponse<GetCharacterDTO>();
             try
             {
-                var dbCharacter = await _context.characters.FirstOrDefaultAsync(c => (c.id == id) && c.user.id == GetUserID()) ?? throw new Exception(); //?? -> an operand where if the value returned is null, the right side of the ?? is evaluated.
+                var dbCharacter = await _context.characters
+                .Include(c => c.user)
+                .Include(c => c.weapon)
+                .Include(c => c.Skills)
+                .FirstOrDefaultAsync(c => (c.id == id) && c.user.id == GetUserID())
+                 ?? throw new Exception();  //?? -> an operand where if the value returned is null, the right side of the ?? is evaluated.
+
                 serviceResponse.data = _mapper.Map<GetCharacterDTO>(dbCharacter); //convert Character object, to GetCharacterDTO object.
                 
             }
@@ -94,10 +102,14 @@ namespace DOTNET_RPG.Services
            //find the specific character to update, if not found, send an error report and update nothing.
            try
            {
-             var dbCharacter = await _context.characters.FirstAsync(c => (c.id == updatedCharacterDTO.id) && (c.user.id == GetUserID())); //returns a Character if exists
-             dbCharacter =  _mapper.Map(updatedCharacterDTO, dbCharacter); //
+             var dbCharacter = await _context.characters
+                .Include(c => c.weapon)
+                .Include(c => c.Skills)
+                .FirstAsync(c => (c.id == updatedCharacterDTO.id) && (c.user.id == GetUserID())); //returns a Character if exists
 
+             dbCharacter =  _mapper.Map(updatedCharacterDTO, dbCharacter);
              await _context.SaveChangesAsync();
+
              //using auto-mapper do do a deep-copy from one object to another.
              serviceResponse.data = _mapper.Map<GetCharacterDTO>(dbCharacter);
            }
@@ -121,6 +133,8 @@ namespace DOTNET_RPG.Services
                 await _context.SaveChangesAsync();
 
                 serviceResponse.data = await _context.characters
+                .Include(c => c.weapon)
+                .Include(c => c.Skills)
                  .Where(c => c.user.id == GetUserID()) //filter
                  .Select(c => _mapper.Map<GetCharacterDTO>(c)) //manipulate every Where result. Convert Character to Get.
                  .ToListAsync();
@@ -144,7 +158,8 @@ namespace DOTNET_RPG.Services
             var response = new ServiceResponse<GetCharacterDTO>();
             int userID = GetUserID();
             var characterList = await _context.characters
-                                .Where(c => c.user.id == userID)
+                                .Include(c => c.Skills)
+                                .Where(c => c.user.id == userID) //nigh impossible to not have a user ID..
                                 .ToListAsync();
 
             if (characterList.Count == 0)
@@ -174,6 +189,47 @@ namespace DOTNET_RPG.Services
             }
 
             return response;
+        }
+
+
+        //############ SKILLS STUFF HERE #################
+
+        public async Task<ServiceResponse<GetCharacterDTO>> AddCharacterSkills(AddSkillToCharacterDTO newSkill)
+        {
+            //to add a skill to a character, the DTO harbors the character's ID and the skill's ID. We need to check if they are correct.
+            var response = new ServiceResponse<GetCharacterDTO>();
+
+            try
+            {
+                //check character ID
+                var character = await _context.characters
+                .Include(c => c.weapon)
+                .Include(c => c.Skills) //can use: .ThenInclude( skill => skill. ...)    to include further properties that relate to skills, like effects and such.
+                .FirstOrDefaultAsync(c => (c.id == newSkill.characterID) && (c.user.id == GetUserID()));
+
+                if (character == null)
+                    throw new Exception ("No such character found!");
+                
+                //character found, look for skill
+                var skill = await _context.skills.FirstOrDefaultAsync(s => s.id == newSkill.skillID);
+
+                if (skill == null)
+                    throw new Exception ("No such skill found!");
+                
+                if (character.Skills.Any(s => s.id == newSkill.skillID))
+                    throw new Exception ("Cannot add already existing skill "+skill.name+" to character.");
+
+                //assuming character and skill found, add
+                character.Skills.Add(skill);
+                await _context.SaveChangesAsync();
+                response.data = _mapper.Map<GetCharacterDTO>(character);
+            } 
+            catch(Exception e){
+                response.setErrorMessage(e.Message);
+            }
+
+            return response;
+
         }
 
 

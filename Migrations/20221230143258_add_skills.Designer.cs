@@ -4,6 +4,7 @@ using DOTNET_RPG.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DOTNETRPG.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221230143258_add_skills")]
+    partial class addskills
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,32 +100,6 @@ namespace DOTNETRPG.Migrations
                     b.HasKey("id");
 
                     b.ToTable("skills");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            damage = 15,
-                            name = "fireball"
-                        },
-                        new
-                        {
-                            id = 2,
-                            damage = 7,
-                            name = "ice arrow"
-                        },
-                        new
-                        {
-                            id = 3,
-                            damage = 20,
-                            name = "lightning bolt"
-                        },
-                        new
-                        {
-                            id = 4,
-                            damage = 12,
-                            name = "earth lance"
-                        });
                 });
 
             modelBuilder.Entity("DOTNET_RPG.Models.User", b =>

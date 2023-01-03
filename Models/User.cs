@@ -11,5 +11,6 @@ namespace DOTNET_RPG.Models
         public string username { get; set; } = "";
         public byte[] passwordHash { get; set; } = new Byte[0];
         public byte[] passwordSalt { get; set;} = new Byte[0]; 
+        public List<Character> characters { get; set; }
     }
 }
