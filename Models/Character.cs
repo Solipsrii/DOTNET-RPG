@@ -24,5 +24,9 @@ namespace DOTNET_RPG.Models
         public Weapon? weapon { get; set; }
         public List<Skill> Skills { get; set; }
 
+        public int fights { get; set; }
+        public int victories { get; set; }
+        public int defeats { get; set; }
+
     }
 }

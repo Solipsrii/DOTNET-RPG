@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DOTNET_RPG.DTOs.Character;
+using DOTNET_RPG.DTOs.Fight;
 using DOTNET_RPG.DTOs.Skills;
 using DOTNET_RPG.DTOs.WeaponDTO;
 

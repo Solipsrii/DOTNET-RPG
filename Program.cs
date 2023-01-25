@@ -37,6 +37,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICharacterService, CharacterService>(); //add the ability for pages to "inject" objects, like to instance objects on their own. Constructor and all.
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IWeaponService, WeaponService>();
+builder.Services.AddScoped<IFightService, FightService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

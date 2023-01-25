@@ -25,5 +25,9 @@ namespace DOTNET_RPG.DTOs.Character
         public List<GetSkillDTO> skills {get; set;}
 
         public RpgClass Class { get; set; } = RpgClass.Mage;
+
+        public int fights { get; set; }
+        public int victories { get; set; }
+        public int defeats { get; set; }
     }
 }
